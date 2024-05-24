@@ -8,26 +8,25 @@ class Generator(nn.Module):
         if isinstance(img_size, (list, tuple)):
             self.init_size = (img_size[0] // 4, img_size[1] // 4)
         else:
-            self.init_size = (img_size // 4, img_size // 4)  # (7, 7)或(8,8)或(16,16)
+            self.init_size = (img_size // 4, img_size // 4)
         if conditional:
-            self.embedding = nn.Embedding(num_classes, nz)  # (10, 100)
-            self.linear = nn.Sequential(nn.Linear(nz * 2, ngf * 2 * self.init_size[0] * self.init_size[1]))  # (250,128*7*7)或(250,128*8*8)或(250,128*16*16)
+            self.embedding = nn.Embedding(num_classes, nz)
+            self.linear = nn.Sequential(nn.Linear(nz * 2, ngf * 2 * self.init_size[0] * self.init_size[1]))
         else:
             self.linear = nn.Sequential(nn.Linear(nz, ngf * 2 * self.init_size[0] * self.init_size[1]))
 
-        # a+(s-1)(a-1)-k+2(k-p-1)+1
-        self.bn0 = nn.BatchNorm2d(ngf * 2)  # (250,128,7,7)或(250,128,8,8)或(250,128,16,16)
+        self.bn0 = nn.BatchNorm2d(ngf * 2)
 
-        self.deconv1 = nn.ConvTranspose2d(ngf * 2, ngf * 2, kernel_size=4, stride=2, padding=1, bias=False)  # (250,128,14,14)或(250,128,16,16)或(250,128,32,32)
-        self.bn1 = nn.BatchNorm2d(ngf * 2)  # (250,128,14,14)或(250,128,16,16)或(250,128,32,32)
-        self.relu1 = nn.LeakyReLU(slope, inplace=True)  # (250,128,14,14)或(250,128,16,16)或(250,128,32,32)
+        self.deconv1 = nn.ConvTranspose2d(ngf * 2, ngf * 2, kernel_size=4, stride=2, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(ngf * 2)
+        self.relu1 = nn.LeakyReLU(slope, inplace=True)
 
-        self.deconv2 = nn.ConvTranspose2d(ngf * 2, ngf, kernel_size=4, stride=2, padding=1, bias=False)  # (250,64,28,28)或(250,64,32,32)或(250,64,64,64)
-        self.bn2 = nn.BatchNorm2d(ngf)  # (250,64,28,28)或(250,64,32,32)或(250,64,64,64)
-        self.relu2 = nn.LeakyReLU(slope, inplace=True)  # (250,64,28,28)或(250,64,32,32)或(250,64,64,64)
+        self.deconv2 = nn.ConvTranspose2d(ngf * 2, ngf, kernel_size=4, stride=2, padding=1, bias=False)
+        self.bn2 = nn.BatchNorm2d(ngf)
+        self.relu2 = nn.LeakyReLU(slope, inplace=True)
 
-        self.conv3 = nn.Conv2d(ngf, nc, kernel_size=3, stride=1, padding=1)  # (250,1,28,28)或(250,3,32,32)或(250,3,64,64)
-        self.bn3 = nn.BatchNorm2d(nc)  # (250,1,28,28)或(250,3,32,32)或(250,3,64,64)
+        self.conv3 = nn.Conv2d(ngf, nc, kernel_size=3, stride=1, padding=1)
+        self.bn3 = nn.BatchNorm2d(nc)
         self.tanh = nn.Tanh()
 
         # # Initialization
@@ -40,16 +39,16 @@ class Generator(nn.Module):
         #         nn.init.normal_(m.weight, 1.0, 0.02)
         #         nn.init.constant_(m.bias, 0)
 
-    def forward(self, z, y=None):  # (250,100) (250,)
+    def forward(self, z, y=None):
         if y is not None:
-            label_embedding = self.embedding(y)  # (250,100)
-            h = torch.cat((z, label_embedding), dim=1)  # (250,200)
+            label_embedding = self.embedding(y)
+            h = torch.cat((z, label_embedding), dim=1)
         else:
             h = z
-        x = self.linear(h)  # (250,512*4*4)
-        x = x.view(x.shape[0], -1, self.init_size[0], self.init_size[1])  # (250,512,4,4)
+        x = self.linear(h)
+        x = x.view(x.shape[0], -1, self.init_size[0], self.init_size[1])
 
-        x = self.bn0(x)  # (250,512,4,4)
+        x = self.bn0(x)
 
         x = self.deconv1(x)
         x = self.bn1(x)
