@@ -1,5 +1,3 @@
-# FedID
-
 This repository contains an implementation with PyTorch for the paper "**Data-Free Black-Box Federated Learning via Zeroth-Order Gradient Estimation**". The figure below illustrates an overview of the FedZGE framework.
 
 ![avatar](./FedZGE.png)
