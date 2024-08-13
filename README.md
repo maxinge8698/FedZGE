@@ -118,7 +118,7 @@ python main.py \
   --q 5 \
   --eps 0.001 \
   --central_model resnet18 \
-  --local_models resnet18,resnet18,resnet18,resnet18,resnet34,resnet34,resnet34,resnet50,resnet50,resnet50 \
+  --local_models resnet18,resnet18,resnet18,resnet34,resnet34,resnet34,resnet50,resnet50,resnet50,resnet50 \
   --optimizer adam \
   --scheduler cosine \
   --output_dir ./runs \
@@ -152,7 +152,7 @@ python main.py \
   --q 5 \
   --eps 0.001 \
   --central_model resnet18 \
-  --local_models resnet18,resnet18,resnet18,resnet18,resnet34,resnet34,resnet34,resnet50,resnet50,resnet50 \
+  --local_models resnet18,resnet18,resnet18,resnet34,resnet34,resnet34,resnet50,resnet50,resnet50,resnet50 \
   --optimizer adam \
   --scheduler cosine \
   --output_dir ./runs \
